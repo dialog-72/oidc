@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:jose_plus/jose.dart';
 import 'package:logging/logging.dart';
@@ -160,6 +161,77 @@ abstract class OidcUserManagerBase {
         const OidcPlatformSpecificOptions();
   }
 
+  Future<void> loginCustomAuthorizationCodeFlow({
+    OidcProviderMetadata? discoveryDocumentOverride,
+    Uri? redirectUriOverride,
+    Uri? originalUri,
+    List<String>? scopeOverride,
+    List<String>? promptOverride,
+    List<String>? uiLocalesOverride,
+    String? displayOverride,
+    List<String>? acrValuesOverride,
+    dynamic extraStateData,
+    bool includeIdTokenHintFromCurrentUser = true,
+    String? idTokenHintOverride,
+    String? loginHint,
+    Duration? maxAgeOverride,
+    Map<String, dynamic>? extraParameters,
+    Map<String, dynamic>? extraTokenParameters,
+    Map<String, String>? extraTokenHeaders,
+    OidcPlatformSpecificOptions? options,
+  }) async {
+    ensureInit();
+    final discoveryDocument =
+        discoveryDocumentOverride ?? this.discoveryDocument;
+    options = getPlatformOptions(options);
+    final prep = prepareForRedirectFlow(options);
+    final simpleReq = OidcSimpleAuthorizationCodeFlowRequest(
+      clientId: clientCredentials.clientId,
+      originalUri: originalUri,
+      redirectUri: redirectUriOverride ?? settings.redirectUri,
+      scope: scopeOverride ?? settings.scope,
+      prompt: promptOverride ?? settings.prompt,
+      display: displayOverride ?? settings.display,
+      extraStateData: extraStateData,
+      uiLocales: uiLocalesOverride ?? settings.uiLocales,
+      acrValues: acrValuesOverride ?? settings.acrValues,
+      idTokenHint: idTokenHintOverride ??
+          (includeIdTokenHintFromCurrentUser ? currentUser?.idToken : null),
+      loginHint: loginHint,
+      extraTokenHeaders: {
+        ...?settings.extraTokenHeaders,
+        ...?extraTokenHeaders,
+      },
+      extraTokenParameters: {
+        ...?settings.extraTokenParameters,
+        ...?extraTokenParameters,
+      },
+      extraParameters: {
+        ...?settings.extraAuthenticationParameters,
+        ...?extraParameters,
+      },
+      maxAge: maxAgeOverride ?? settings.maxAge,
+      options: getSerializableOptions(options),
+    );
+    // this function adds state, state data, nonce to the store
+    // the state/state data is only until we get a response (success or fail).
+    // the nonce is until the user logs out.
+    final requestContainer =
+        await OidcEndpoints.prepareAuthorizationCodeFlowRequest(
+      input: simpleReq,
+      metadata: discoveryDocument,
+      store: store,
+    );
+    await tryGetCustomAuthResponse(
+      grantType: OidcConstants_GrantType.authorizationCode,
+      request: requestContainer.request,
+      options: options,
+      metadata: discoveryDocument,
+      prep: prep,
+      uri: 'https://preprod.www.memberz.fr/jeunest/sso',
+    );
+  }
+
   /// Attempts to login the user via the AuthorizationCodeFlow.
   ///
   /// [originalUri] is the uri you want to be redirected to after authentication is done,
@@ -268,6 +340,51 @@ abstract class OidcUserManagerBase {
       nonce: null,
       metadata: discoveryDocument,
     );
+  }
+
+  @protected
+  Future<void> tryGetCustomAuthResponse({
+    required OidcAuthorizeRequest request,
+    required String grantType,
+    required OidcPlatformSpecificOptions options,
+    required OidcProviderMetadata metadata,
+    required Map<String, dynamic> prep,
+    required String uri,
+  }) async {
+    try {
+      final response =
+          await getAuthorizationResponse(metadata, request, options, prep);
+      if (response == null) {
+        return null;
+      }
+      final state = response.state;
+
+      //since we already have a response, remove it from the store.
+      if (state != null) {
+        await store.setStateResponseData(state: state, stateData: null);
+      }
+      if (response.code == null || response.codeVerifier == null) {
+        return;
+      }
+      await OidcEndpoints.sendCustomAuthRequest(
+        client: httpClient,
+        uri: uri,
+        code: response.code!,
+        codeVerifier: response.codeVerifier!,
+      );
+    } on OidcException catch (e) {
+      //failed to authorize.
+      final response = e.errorResponse;
+      if (response == null) {
+        rethrow;
+      }
+      //if we have a response, remove it from the store.
+      final state = response.state;
+      if (state != null) {
+        await store.setStateResponseData(state: state, stateData: null);
+      }
+      rethrow;
+    }
   }
 
   @protected
