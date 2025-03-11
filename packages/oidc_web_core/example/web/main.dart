@@ -1,3 +1,5 @@
+import 'dart:js_interop';
+
 import 'package:oidc_web_core/oidc_web_core.dart';
 import 'package:oidc_core/oidc_core.dart';
 import 'package:web/web.dart' as web;
@@ -78,7 +80,7 @@ void registerUserOutput() {
       web.document.querySelector('#userOutput') as web.HTMLDivElement;
   duendeManager.userChanges().listen((user) {
     print('user changed!');
-    element.innerHTML = "";
+    element.innerHTML = "" as JSAny;
     if (user == null) {
       return;
     }

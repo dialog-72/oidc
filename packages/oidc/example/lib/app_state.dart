@@ -21,8 +21,9 @@ OidcUserManager currentManager = userManager;
 
 final userManager = OidcUserManager.lazy(
   ///rge
-  discoveryDocumentUri:
-      Uri.parse('https://connexev3.recette.grandest.fr/gecas/oidc/.well-known'),
+  discoveryDocumentUri: Uri.parse(
+    'https://connexev3-casv5.recette.grandest.fr/gecas/oidc/.well-known',
+  ),
   clientCredentials: const OidcClientAuthentication.clientSecretBasic(
     clientId: 'JEUNESTV3-REC-PART-MOBILE',
     clientSecret: 'GrandEST',

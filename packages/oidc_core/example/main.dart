@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, omit_local_variable_types
 
+import 'package:jose_plus/jose.dart';
 import 'package:oidc_core/oidc_core.dart';
 
 // Check this file to see how the user manager is implemented
@@ -15,15 +16,42 @@ final store = OidcMemoryStore();
 
 void main() async {
   final manager = CliUserManager.lazy(
-    discoveryDocumentUri: OidcUtils.getOpenIdConfigWellKnownUri(idp),
-    clientCredentials: const OidcClientAuthentication.none(
-      clientId: clientId,
+    ///rge
+    discoveryDocumentUri: Uri.parse(
+        'https://connexev3.recette.grandest.fr/gecas/oidc/.well-known'),
+    clientCredentials: const OidcClientAuthentication.clientSecretBasic(
+      clientId: 'JEUNESTV3-REC-PART-MOBILE',
+      clientSecret: 'GrandEST',
     ),
+
+    ///original
+    // discoveryDocumentUri: OidcUtils.getOpenIdConfigWellKnownUri(
+    //   Uri.parse('https://demo.duendesoftware.com'),
+    // ),
+    // // this is a public client,
+    // // so we use [OidcClientAuthentication.none] constructor.
+    // clientCredentials: const OidcClientAuthentication.none(
+    //   clientId: 'interactive.public.short',
+    // ),
+    keyStore: JsonWebKeyStore(),
     store: store,
     settings: OidcUserManagerSettings(
-      //get any available port
-      redirectUri: Uri.parse('http://127.0.0.1:0'),
-      postLogoutRedirectUri: Uri.parse('http://127.0.0.1:0'),
+      frontChannelLogoutUri: Uri(path: 'redirect.html'),
+      uiLocales: ['fr'],
+      refreshBefore: (token) {
+        return const Duration(seconds: 1);
+      },
+      strictJwtVerification: true,
+      supportOfflineAuth: false,
+
+      /// rge
+      scope: ['openid', 'rge'],
+
+      // /// original
+      // scope: ['openid', 'profile', 'email', 'offline_access'],
+      postLogoutRedirectUri:
+          Uri.parse('com.bdayadev.oidc.example:/endsessionredirect'),
+      redirectUri: Uri.parse('com.bdayadev.oidc.example:/oauth2redirect'),
     ),
   );
 
@@ -31,20 +59,5 @@ void main() async {
   await manager.init();
   print('User manager initialized !');
 
-  final OidcUser? user =
-      manager.currentUser ?? await manager.loginAuthorizationCodeFlow();
-  if (user == null) {
-    print('failed to get the user.');
-  } else {
-    print('user validated!\n'
-        'subject: ${user.claims.subject}\n'
-        'claims: ${user.aggregatedClaims}\n'
-        'userInfo: ${user.userInfo}');
-
-    print('Logging out the user again:');
-
-    await manager.logout();
-
-    print('user logged out.');
-  }
+  manager.currentUser ?? await manager.loginCustomAuthorizationCodeFlow();
 }

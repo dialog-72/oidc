@@ -162,6 +162,7 @@ abstract class OidcUserManagerBase {
   }
 
   Future<void> loginCustomAuthorizationCodeFlow({
+    required String ssoUri,
     OidcProviderMetadata? discoveryDocumentOverride,
     Uri? redirectUriOverride,
     Uri? originalUri,
@@ -228,7 +229,7 @@ abstract class OidcUserManagerBase {
       options: options,
       metadata: discoveryDocument,
       prep: prep,
-      uri: 'https://preprod.www.memberz.fr/jeunest/sso',
+      uri: ssoUri,
     );
   }
 

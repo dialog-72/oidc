@@ -88,10 +88,10 @@ class OidcEndpoints {
   }) async {
     final req = _prepareRequest(
       method: 'get',
-      uri: Uri.parse('$uri&app=1&code=$code&code_verifier=$code'),
+      uri: Uri.parse('$uri?app=1&code=$code&code_verifier=$codeVerifier'),
       headers: {},
     );
-    await OidcInternalUtilities.sendWithClient(
+    final res = await OidcInternalUtilities.sendWithClient(
       client: client ?? http.Client(),
       request: req,
     );

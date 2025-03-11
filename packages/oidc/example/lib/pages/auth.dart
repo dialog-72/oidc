@@ -134,12 +134,14 @@ class _AuthPageState extends State<AuthPage> {
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 try {
-                  await app_state.currentManager.loginAuthorizationCodeFlow(
+                  await app_state.currentManager
+                      .loginCustomAuthorizationCodeFlow(
                     originalUri: parsedOriginalUri ?? Uri.parse('/'),
                     //store any arbitrary data, here we store the authorization
                     //start time.
                     extraStateData: DateTime.now().toIso8601String(),
                     options: _getOptions(),
+                    ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
 
                     //NOTE: you can pass more parameters here.
                   );
