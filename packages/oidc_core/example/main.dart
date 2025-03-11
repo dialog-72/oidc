@@ -59,5 +59,8 @@ void main() async {
   await manager.init();
   print('User manager initialized !');
 
-  manager.currentUser ?? await manager.loginCustomAuthorizationCodeFlow();
+  manager.currentUser ??
+      await manager.loginCustomAuthorizationCodeFlow(
+        ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
+      );
 }
