@@ -134,13 +134,15 @@ class _AuthPageState extends State<AuthPage> {
               onPressed: () async {
                 final messenger = ScaffoldMessenger.of(context);
                 try {
-                  final result =
-                      await app_state.currentManager.loginAuthorizationCodeFlow(
+                  await app_state.currentManager
+                      .loginCustomAuthorizationCodeFlow(
                     originalUri: parsedOriginalUri ?? Uri.parse('/'),
                     //store any arbitrary data, here we store the authorization
                     //start time.
                     extraStateData: DateTime.now().toIso8601String(),
                     options: _getOptions(),
+                    ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
+
                     //NOTE: you can pass more parameters here.
                   );
                   if (kIsWeb &&
@@ -153,7 +155,7 @@ class _AuthPageState extends State<AuthPage> {
                   messenger.showSnackBar(
                     SnackBar(
                       content: Text(
-                        'loginAuthorizationCodeFlow returned user id: ${result?.uid}',
+                        'loginAuthorizationCodeFlow returned user id',
                       ),
                     ),
                   );

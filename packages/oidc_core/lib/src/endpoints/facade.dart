@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
@@ -77,6 +78,23 @@ class OidcEndpoints {
           .cast<String, String>();
     }
     return req;
+  }
+
+  static Future<void> sendCustomAuthRequest({
+    required http.Client? client,
+    required String uri,
+    required String code,
+    required String codeVerifier,
+  }) async {
+    final req = _prepareRequest(
+      method: 'get',
+      uri: Uri.parse('$uri?app=1&code=$code&code_verifier=$codeVerifier'),
+      headers: {},
+    );
+    final res = await OidcInternalUtilities.sendWithClient(
+      client: client ?? http.Client(),
+      request: req,
+    );
   }
 
   /// Prepares an opinionated [OidcAuthorizeRequest]

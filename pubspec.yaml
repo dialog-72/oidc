@@ -1,4 +1,7 @@
-name: oidc_workspace
+name: oidc_dialog
+description: "package oidc customisé pour dialog"
+version: 0.0.1
+repository: https://github.com/dialog-72/oidc
 
 environment:
   sdk: '>=2.18.0 <3.0.0'
