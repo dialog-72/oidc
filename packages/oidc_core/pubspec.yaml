@@ -16,7 +16,7 @@ dependencies:
   meta: ^1.9.1
   nonce: ^1.2.0
   logging: ^1.2.0
-  clock: ^1.1.2
+  clock: ^1.1.1
   copy_with_extension: ^5.0.4
   rxdart: ">=0.27.7 <2.0.0"
 
