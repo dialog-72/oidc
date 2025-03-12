@@ -95,6 +95,17 @@ class OidcEndpoints {
       client: client ?? http.Client(),
       request: req,
     );
+
+    final responseBody = jsonDecode(res.body) as Map<String, dynamic>;
+    final responseCode = responseBody['code'] as Map<String, dynamic>;
+    final responseCodeTextContent = responseCode['textContent'];
+    if (responseCodeTextContent != '0') {
+      final responseDescription =
+          responseBody['description'] as Map<String, dynamic>;
+      final responseDescriptionTextContent =
+          responseDescription['textContent'] as String;
+      throw OidcException(responseDescriptionTextContent);
+    }
   }
 
   /// Prepares an opinionated [OidcAuthorizeRequest]

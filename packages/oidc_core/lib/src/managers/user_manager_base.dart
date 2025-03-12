@@ -162,7 +162,6 @@ abstract class OidcUserManagerBase {
   }
 
   Future<void> loginCustomAuthorizationCodeFlow({
-    required String ssoUri,
     OidcProviderMetadata? discoveryDocumentOverride,
     Uri? redirectUriOverride,
     Uri? originalUri,
@@ -180,6 +179,7 @@ abstract class OidcUserManagerBase {
     Map<String, dynamic>? extraTokenParameters,
     Map<String, String>? extraTokenHeaders,
     OidcPlatformSpecificOptions? options,
+    required String ssoUri,
   }) async {
     ensureInit();
     final discoveryDocument =
@@ -510,6 +510,7 @@ abstract class OidcUserManagerBase {
 
   /// Logs out the current user and calls [forgetUser] if successful.
   Future<void> logout({
+    Uri? customLogoutUri,
     String? logoutHint,
     Map<String, dynamic>? extraParameters,
     OidcPlatformSpecificOptions? options,
@@ -520,14 +521,21 @@ abstract class OidcUserManagerBase {
     OidcProviderMetadata? discoveryDocumentOverride,
   }) async {
     ensureInit();
-    final discoveryDocument =
+    OidcProviderMetadata discoveryDocument =
         discoveryDocumentOverride ?? this.discoveryDocument;
+    if (customLogoutUri != null) {
+      discoveryDocument =
+          discoveryDocument.copyWith(endSessionEndpoint: customLogoutUri);
+    }
+
     options = getPlatformOptions(options);
     final prep = prepareForRedirectFlow(options);
-    final currentUser = this.currentUser;
-    if (currentUser == null) {
-      return;
-    }
+    // final currentUser = this.currentUser;
+    // if (currentUser == null) {
+    //   return;
+    // }
+
+    // si le idtoken de l'utilisteur est null, postLogoutRedirectUri doit être nul aussi
     final postLogoutRedirectUri =
         postLogoutRedirectUriOverride ?? settings.postLogoutRedirectUri;
 
@@ -549,9 +557,9 @@ abstract class OidcUserManagerBase {
         discoveryDocument,
         OidcEndSessionRequest(
           clientId: clientCredentials.clientId,
-          postLogoutRedirectUri: postLogoutRedirectUri,
+          postLogoutRedirectUri: null,
           uiLocales: uiLocalesOverride ?? settings.uiLocales,
-          idTokenHint: currentUser.idToken,
+          idTokenHint: currentUser?.idToken,
           extra: extraParameters,
           logoutHint: logoutHint,
           state: stateData?.id,

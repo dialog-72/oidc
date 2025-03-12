@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oidc/oidc.dart';
 import 'package:oidc_example/app_state.dart' as app_state;
+import 'package:http/http.dart' as http;
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -171,6 +172,16 @@ class _AuthPageState extends State<AuthPage> {
                 }
               },
               child: const Text('Start Auth code flow'),
+            ),
+            const Divider(),
+            ElevatedButton(
+              onPressed: () async {
+                await app_state.currentManager.logout(
+                  customLogoutUri:
+                      Uri.parse('https://preprod.www.memberz.fr/jeunest/slo'),
+                );
+              },
+              child: const Text('déconnexion'),
             ),
             const Divider(),
             ElevatedButton(

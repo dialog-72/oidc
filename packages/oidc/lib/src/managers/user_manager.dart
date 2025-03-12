@@ -41,6 +41,22 @@ class OidcUserManager extends OidcUserManagerBase {
   }
 
   @override
+  Future<OidcEndSessionResponse?> getCustomEndSessionResponse(
+    String logoutUri,
+    OidcProviderMetadata metadata,
+    OidcEndSessionRequest request,
+    OidcPlatformSpecificOptions options,
+    Map<String, dynamic> preparationResult,
+  ) {
+    return OidcFlutter.getPlatformEndSessionResponse(
+      metadata: metadata,
+      request: request,
+      options: options,
+      preparationResult: preparationResult,
+    );
+  }
+
+  @override
   Future<OidcEndSessionResponse?> getEndSessionResponse(
     OidcProviderMetadata metadata,
     OidcEndSessionRequest request,
