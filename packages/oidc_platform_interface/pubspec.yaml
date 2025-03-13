@@ -11,7 +11,9 @@ dependencies:
   flutter:
     sdk: flutter
   json_annotation: ^4.8.1
-  oidc_core: ^0.9.1
+  oidc_core:
+    path: ../oidc_core
+
   plugin_platform_interface: ^2.1.0
 
 dev_dependencies:

@@ -3,6 +3,7 @@ description: Web implementation of the oidc plugin
 version: 0.6.0+1
 repository: https://github.com/Bdaya-Dev/oidc/tree/main/packages/oidc_web
 homepage: https://bdaya-dev.github.io/oidc/
+publish_to: none
 environment:
   sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.22.0"
@@ -21,9 +22,13 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
 
-  oidc_core: ^0.9.1
-  oidc_platform_interface: ^0.6.0+1
-  oidc_web_core: ^0.3.0+1
+  oidc_core:
+    path: ../oidc_core
+
+  oidc_platform_interface:
+    path: ../oidc_platform_interface
+  oidc_web_core: 
+    path: ../oidc_web_core
 
 dev_dependencies:
   flutter_test:

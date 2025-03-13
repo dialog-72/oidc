@@ -4,6 +4,7 @@ version: 0.9.0+1
 repository: https://github.com/Bdaya-Dev/oidc/tree/main/packages/oidc
 topics: ['oidc', 'openidconnect', 'oauth', 'authentication']
 homepage: https://bdaya-dev.github.io/oidc/
+publish_to: none
 environment:
   sdk: ">=3.4.0 <4.0.0"
   flutter: ">=3.22.0"
@@ -27,14 +28,23 @@ dependencies:
   flutter:
     sdk: flutter
   # Endorsed packages
-  oidc_android: ^0.6.0+1
-  oidc_core: ^0.9.1
-  oidc_ios: ^0.6.0+1
-  oidc_linux: ^0.3.0+12
-  oidc_macos: ^0.6.0+1
-  oidc_platform_interface: ^0.6.0+1
-  oidc_web: ^0.6.0+1
-  oidc_windows: ^0.3.1+6
+  oidc_android:
+    path: ../oidc_android
+  oidc_core:
+    path: ../oidc_core
+
+  oidc_ios:
+    path: ../oidc_ios
+  oidc_linux: 
+    path: ../oidc_linux
+  oidc_macos: 
+    path: ../oidc_macos
+  oidc_platform_interface:
+    path: ../oidc_platform_interface
+  oidc_web: 
+    path: ../oidc_web
+  oidc_windows: 
+    path: ../oidc_windows
   # ====================
   http: ^1.1.0
   jose_plus: ^0.4.4
