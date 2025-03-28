@@ -177,8 +177,9 @@ class _AuthPageState extends State<AuthPage> {
             ElevatedButton(
               onPressed: () async {
                 await app_state.currentManager.logout(
-                  customLogoutUri:
-                      Uri.parse('https://preprod.www.memberz.fr/jeunest/slo'),
+                  customLogoutUri: Uri.parse(
+                    'https://preprod.www.memberz.fr/jeunest/slo&client_id=${app_state.currentManager.clientCredentials.clientId}',
+                  ),
                 );
               },
               child: const Text('déconnexion'),
