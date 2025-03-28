@@ -61,6 +61,7 @@ void main() async {
 
   manager.currentUser ??
       await manager.loginCustomAuthorizationCodeFlow(
+        clientId: 'JEUNESTV3-REC-PART-MOBILE',
         ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
       );
 }

@@ -161,7 +161,7 @@ abstract class OidcUserManagerBase {
         const OidcPlatformSpecificOptions();
   }
 
-  Future<void> loginCustomAuthorizationCodeFlow({
+  Future<Map<String, dynamic>> loginCustomAuthorizationCodeFlow({
     OidcProviderMetadata? discoveryDocumentOverride,
     Uri? redirectUriOverride,
     Uri? originalUri,
@@ -180,6 +180,7 @@ abstract class OidcUserManagerBase {
     Map<String, String>? extraTokenHeaders,
     OidcPlatformSpecificOptions? options,
     required String ssoUri,
+    required String clientId,
   }) async {
     ensureInit();
     final discoveryDocument =
@@ -223,13 +224,14 @@ abstract class OidcUserManagerBase {
       metadata: discoveryDocument,
       store: store,
     );
-    await tryGetCustomAuthResponse(
+    return await tryGetCustomAuthResponse(
       grantType: OidcConstants_GrantType.authorizationCode,
       request: requestContainer.request,
       options: options,
       metadata: discoveryDocument,
       prep: prep,
       uri: ssoUri,
+      clientId: clientId,
     );
   }
 
@@ -344,19 +346,22 @@ abstract class OidcUserManagerBase {
   }
 
   @protected
-  Future<void> tryGetCustomAuthResponse({
+  Future<Map<String, dynamic>> tryGetCustomAuthResponse({
     required OidcAuthorizeRequest request,
     required String grantType,
     required OidcPlatformSpecificOptions options,
     required OidcProviderMetadata metadata,
     required Map<String, dynamic> prep,
     required String uri,
+    required String clientId,
   }) async {
     try {
       final response =
           await getAuthorizationResponse(metadata, request, options, prep);
       if (response == null) {
-        return null;
+        throw const OidcException(
+          "Erreur lors de la récupération de la réponse d'autorisation",
+        );
       }
       final state = response.state;
 
@@ -365,13 +370,14 @@ abstract class OidcUserManagerBase {
         await store.setStateResponseData(state: state, stateData: null);
       }
       if (response.code == null || response.codeVerifier == null) {
-        return;
+        throw const OidcException('Le code ou le code verifier sont nuls');
       }
-      await OidcEndpoints.sendCustomAuthRequest(
+      return await OidcEndpoints.sendCustomAuthRequest(
         client: httpClient,
         uri: uri,
         code: response.code!,
         codeVerifier: response.codeVerifier!,
+        clientId: clientId,
       );
     } on OidcException catch (e) {
       //failed to authorize.

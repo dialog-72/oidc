@@ -80,15 +80,17 @@ class OidcEndpoints {
     return req;
   }
 
-  static Future<void> sendCustomAuthRequest({
+  static Future<Map<String, dynamic>> sendCustomAuthRequest({
     required http.Client? client,
     required String uri,
     required String code,
     required String codeVerifier,
+    required String clientId,
   }) async {
     final req = _prepareRequest(
       method: 'get',
-      uri: Uri.parse('$uri?app=1&code=$code&code_verifier=$codeVerifier'),
+      uri: Uri.parse(
+          '$uri?app=1&code=$code&code_verifier=$codeVerifier&xsl=smart_authentication_result.json.xsl&client_id=$clientId'),
       headers: {},
     );
     final res = await OidcInternalUtilities.sendWithClient(
@@ -97,15 +99,7 @@ class OidcEndpoints {
     );
 
     final responseBody = jsonDecode(res.body) as Map<String, dynamic>;
-    final responseCode = responseBody['code'] as Map<String, dynamic>;
-    final responseCodeTextContent = responseCode['textContent'];
-    if (responseCodeTextContent != '0') {
-      final responseDescription =
-          responseBody['description'] as Map<String, dynamic>;
-      final responseDescriptionTextContent =
-          responseDescription['textContent'] as String;
-      throw OidcException(responseDescriptionTextContent);
-    }
+    return responseBody;
   }
 
   /// Prepares an opinionated [OidcAuthorizeRequest]
