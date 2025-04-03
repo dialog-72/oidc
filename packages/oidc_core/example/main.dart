@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print, omit_local_variable_types
 
+import 'package:dio/dio.dart';
 import 'package:jose_plus/jose.dart';
 import 'package:oidc_core/oidc_core.dart';
 
@@ -50,8 +51,8 @@ void main() async {
       // /// original
       // scope: ['openid', 'profile', 'email', 'offline_access'],
       postLogoutRedirectUri:
-          Uri.parse('com.bdayadev.oidc.example:/endsessionredirect'),
-      redirectUri: Uri.parse('com.bdayadev.oidc.example:/oauth2redirect'),
+          Uri.parse('fr.memberz.smartrge:/endsessionredirect'),
+      redirectUri: Uri.parse('fr.memberz.smartrge:/oauth2redirect'),
     ),
   );
 
@@ -61,6 +62,7 @@ void main() async {
 
   manager.currentUser ??
       await manager.loginCustomAuthorizationCodeFlow(
+        dioClient: Dio(),
         clientId: 'JEUNESTV3-REC-PART-MOBILE',
         ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
       );

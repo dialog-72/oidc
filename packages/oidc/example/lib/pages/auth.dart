@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_redundant_argument_values
 
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -137,13 +138,14 @@ class _AuthPageState extends State<AuthPage> {
                 try {
                   final authenticationResult = await app_state.currentManager
                       .loginCustomAuthorizationCodeFlow(
+                    dioClient: Dio(),
                     originalUri: parsedOriginalUri ?? Uri.parse('/'),
                     //store any arbitrary data, here we store the authorization
                     //start time.
                     extraStateData: DateTime.now().toIso8601String(),
                     options: _getOptions(),
                     ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
-                    clientId: 'JEUNESTV3-REC-PART-MOBILE',
+                    clientId: 'JEUNESTV3-PROD-PARTENAIRE-MOBILE',
                     //NOTE: you can pass more parameters here.
                   );
                   if (kIsWeb &&

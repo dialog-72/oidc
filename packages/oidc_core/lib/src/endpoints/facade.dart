@@ -4,6 +4,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:clock/clock.dart';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:jose_plus/jose.dart';
 import 'package:nonce/nonce.dart';
@@ -81,24 +82,17 @@ class OidcEndpoints {
   }
 
   static Future<Map<String, dynamic>> sendCustomAuthRequest({
-    required http.Client? client,
+    required Dio client,
     required String uri,
     required String code,
     required String codeVerifier,
     required String clientId,
   }) async {
-    final req = _prepareRequest(
-      method: 'get',
-      uri: Uri.parse(
-          '$uri?app=1&code=$code&code_verifier=$codeVerifier&xsl=smart_authentication_result.json.xsl&client_id=$clientId'),
-      headers: {},
-    );
-    final res = await OidcInternalUtilities.sendWithClient(
-      client: client ?? http.Client(),
-      request: req,
+    final res = await client.get<Map<String, dynamic>>(
+      '$uri?app=1&code=$code&code_verifier=$codeVerifier&xsl=smart_authentication_result.json.xsl&client_id=$clientId',
     );
 
-    final responseBody = jsonDecode(res.body) as Map<String, dynamic>;
+    final responseBody = res.data!;
     return responseBody;
   }
 

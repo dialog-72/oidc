@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:jose_plus/jose.dart';
 import 'package:logging/logging.dart';
@@ -162,6 +163,9 @@ abstract class OidcUserManagerBase {
   }
 
   Future<Map<String, dynamic>> loginCustomAuthorizationCodeFlow({
+    required String ssoUri,
+    required String clientId,
+    required Dio dioClient,
     OidcProviderMetadata? discoveryDocumentOverride,
     Uri? redirectUriOverride,
     Uri? originalUri,
@@ -179,8 +183,6 @@ abstract class OidcUserManagerBase {
     Map<String, dynamic>? extraTokenParameters,
     Map<String, String>? extraTokenHeaders,
     OidcPlatformSpecificOptions? options,
-    required String ssoUri,
-    required String clientId,
   }) async {
     ensureInit();
     final discoveryDocument =
@@ -225,6 +227,7 @@ abstract class OidcUserManagerBase {
       store: store,
     );
     return await tryGetCustomAuthResponse(
+      dio: dioClient,
       grantType: OidcConstants_GrantType.authorizationCode,
       request: requestContainer.request,
       options: options,
@@ -347,6 +350,7 @@ abstract class OidcUserManagerBase {
 
   @protected
   Future<Map<String, dynamic>> tryGetCustomAuthResponse({
+    required Dio dio,
     required OidcAuthorizeRequest request,
     required String grantType,
     required OidcPlatformSpecificOptions options,
@@ -373,7 +377,7 @@ abstract class OidcUserManagerBase {
         throw const OidcException('Le code ou le code verifier sont nuls');
       }
       return await OidcEndpoints.sendCustomAuthRequest(
-        client: httpClient,
+        client: dio,
         uri: uri,
         code: response.code!,
         codeVerifier: response.codeVerifier!,

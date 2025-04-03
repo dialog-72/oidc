@@ -22,11 +22,11 @@ OidcUserManager currentManager = userManager;
 final userManager = OidcUserManager.lazy(
   ///rge
   discoveryDocumentUri: Uri.parse(
-    'https://connexev3-casv5.recette.grandest.fr/gecas/oidc/.well-known',
+    'https://connexev3.grandest.fr/gecas/oidc/.well-known/openid-configuration',
   ),
   clientCredentials: const OidcClientAuthentication.clientSecretBasic(
-    clientId: 'JEUNESTV3-REC-PART-MOBILE',
-    clientSecret: 'GrandEST',
+    clientId: 'JEUNESTV3-PROD-PARTENAIRE-MOBILE',
+    clientSecret: 'NqlyE0AunWxV2WHkLefd',
   ),
 
   ///original
@@ -54,9 +54,8 @@ final userManager = OidcUserManager.lazy(
 
     // /// original
     // scope: ['openid', 'profile', 'email', 'offline_access'],
-    postLogoutRedirectUri:
-        Uri.parse('com.bdayadev.oidc.example:/endsessionredirect'),
-    redirectUri: Uri.parse('com.bdayadev.oidc.example:/oauth2redirect'),
+    postLogoutRedirectUri: Uri.parse('fr.memberz.smartrge:/endsessionredirect'),
+    redirectUri: Uri.parse('fr.memberz.smartrge:/oauth2redirect'),
   ),
 );
 
