@@ -11,7 +11,7 @@ class OidcIOS extends OidcPlatform with OidcFlutterAppauth {
   }
 
   @override
-  ExternalUserAgent getExternalUserAgent(OidcPlatformSpecificOptions options) {
-    return options.ios.externalUserAgent;
+  bool getPreferEphemeralSession(OidcPlatformSpecificOptions options) {
+    return options.ios.preferEphemeralSession;
   }
 }

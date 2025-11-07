@@ -37,10 +37,10 @@ class _AuthPageState extends State<AuthPage> {
         allowInsecureConnections: allowInsecureConnections,
       ),
       ios: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        externalUserAgent: ExternalUserAgent.sfSafariViewController,
+        preferEphemeralSession: preferEphemeralSession,
       ),
       macos: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        externalUserAgent: ExternalUserAgent.sfSafariViewController,
+        preferEphemeralSession: preferEphemeralSession,
       ),
       windows: const OidcPlatformSpecificOptions_Native(),
     );
