@@ -1,3 +1,4 @@
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:oidc_core/oidc_core.dart';
 import 'package:oidc_flutter_appauth/oidc_flutter_appauth.dart';
 import 'package:oidc_platform_interface/oidc_platform_interface.dart';
@@ -10,7 +11,7 @@ class OidcMacOS extends OidcPlatform with OidcFlutterAppauth {
   }
 
   @override
-  bool getPreferEphemeralSession(OidcPlatformSpecificOptions options) {
-    return options.macos.preferEphemeralSession;
+  ExternalUserAgent getExternalUserAgent(OidcPlatformSpecificOptions options) {
+    return options.macos.externalUserAgent;
   }
 }

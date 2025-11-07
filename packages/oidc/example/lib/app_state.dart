@@ -20,24 +20,18 @@ final exampleLogger = Logger('oidc.example');
 OidcUserManager currentManager = userManager;
 
 final userManager = OidcUserManager.lazy(
-  ///rge
+  // discoveryDocumentUri: Uri.parse(
+  //   'https://connexev3.grandest.fr/gecas/oidc/.well-known/openid-configuration',
+  // ),
   discoveryDocumentUri: Uri.parse(
-    'https://connexev3.grandest.fr/gecas/oidc/.well-known/openid-configuration',
+    'https://connexev3.recette.grandest.fr/gecas/oidc/.well-known',
   ),
   clientCredentials: const OidcClientAuthentication.clientSecretBasic(
-    clientId: 'JEUNESTV3-PROD-PARTENAIRE-MOBILE',
-    clientSecret: 'NqlyE0AunWxV2WHkLefd',
+    // clientId: 'JEUNESTV3-PROD-BENEFICIAIRE-MOBILE',
+    // clientSecret: '0gb7Y6QlRLUbk3ncLmZM',
+    clientId: 'JEUNESTV3-REC-PART-MOBILE',
+    clientSecret: 'GrandEST',
   ),
-
-  ///original
-  // discoveryDocumentUri: OidcUtils.getOpenIdConfigWellKnownUri(
-  //   Uri.parse('https://demo.duendesoftware.com'),
-  // ),
-  // // this is a public client,
-  // // so we use [OidcClientAuthentication.none] constructor.
-  // clientCredentials: const OidcClientAuthentication.none(
-  //   clientId: 'interactive.public.short',
-  // ),
   keyStore: JsonWebKeyStore(),
   store: OidcDefaultStore(),
   settings: OidcUserManagerSettings(
@@ -48,14 +42,14 @@ final userManager = OidcUserManager.lazy(
     },
     strictJwtVerification: true,
     supportOfflineAuth: false,
-
-    /// rge
     scope: ['openid', 'rge'],
-
-    // /// original
-    // scope: ['openid', 'profile', 'email', 'offline_access'],
-    postLogoutRedirectUri: Uri.parse('fr.memberz.smartrge:/endsessionredirect'),
-    redirectUri: Uri.parse('fr.memberz.smartrge:/oauth2redirect'),
+    // scope: ['openid'],
+    // postLogoutRedirectUri:
+    //     Uri.parse('com.grandest.jeunest:/oauth2redirect'),
+    redirectUri: Uri.parse('com.grandest.jeunest:/oauth2redirect'),
+    postLogoutRedirectUri:
+        Uri.parse('com.grandest.jeunest:/endsessionredirect'),
+    // redirectUri: Uri.parse('com.grandest.jeunest:/oauth2redirect'),
   ),
 );
 

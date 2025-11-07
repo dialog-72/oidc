@@ -3,10 +3,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:go_router/go_router.dart';
 import 'package:oidc/oidc.dart';
 import 'package:oidc_example/app_state.dart' as app_state;
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -37,10 +39,11 @@ class _AuthPageState extends State<AuthPage> {
         allowInsecureConnections: allowInsecureConnections,
       ),
       ios: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        preferEphemeralSession: preferEphemeralSession,
+        externalUserAgent:
+            ExternalUserAgent.ephemeralAsWebAuthenticationSession,
       ),
       macos: OidcPlatformSpecificOptions_AppAuth_IosMacos(
-        preferEphemeralSession: preferEphemeralSession,
+        externalUserAgent: ExternalUserAgent.sfSafariViewController,
       ),
       windows: const OidcPlatformSpecificOptions_Native(),
     );
@@ -138,16 +141,17 @@ class _AuthPageState extends State<AuthPage> {
                 try {
                   final authenticationResult = await app_state.currentManager
                       .loginCustomAuthorizationCodeFlow(
-                    dioClient: Dio(),
-                    originalUri: parsedOriginalUri ?? Uri.parse('/'),
-                    //store any arbitrary data, here we store the authorization
-                    //start time.
-                    extraStateData: DateTime.now().toIso8601String(),
-                    options: _getOptions(),
-                    ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
-                    clientId: 'JEUNESTV3-PROD-PARTENAIRE-MOBILE',
-                    //NOTE: you can pass more parameters here.
-                  );
+                          dioClient: Dio(),
+                          originalUri: parsedOriginalUri ?? Uri.parse('/'),
+                          //store any arbitrary data, here we store the authorization
+                          //start time.
+                          extraStateData: DateTime.now().toIso8601String(),
+                          options: _getOptions(),
+                          ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
+                          clientId: 'JEUNESTV3-REC-PART-MOBILE',
+                          promptOverride: ['none']
+                          //NOTE: you can pass more parameters here.
+                          );
                   if (kIsWeb &&
                       webNavigationMode ==
                           OidcPlatformSpecificOptions_Web_NavigationMode
@@ -163,6 +167,19 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   );
                 } catch (e) {
+                  final authenticationResult = await app_state.currentManager
+                      .loginCustomAuthorizationCodeFlow(
+                          dioClient: Dio(),
+                          originalUri: parsedOriginalUri ?? Uri.parse('/'),
+                          //store any arbitrary data, here we store the authorization
+                          //start time.
+                          extraStateData: DateTime.now().toIso8601String(),
+                          options: _getOptions(),
+                          ssoUri: 'https://preprod.www.memberz.fr/jeunest/sso',
+                          clientId: 'JEUNESTV3-REC-PART-MOBILE',
+                          promptOverride: ['login']
+                          //NOTE: you can pass more parameters here.
+                          );
                   app_state.exampleLogger.severe(e.toString());
                   messenger.showSnackBar(
                     SnackBar(
@@ -174,6 +191,15 @@ class _AuthPageState extends State<AuthPage> {
                 }
               },
               child: const Text('Start Auth code flow'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                launchUrl(
+                  Uri.parse(
+                      'https://preprod.www.memberz.fr/jeunest/go/projet-voltaire'),
+                );
+              },
+              child: Text('Voltaire'),
             ),
             const Divider(),
             ElevatedButton(

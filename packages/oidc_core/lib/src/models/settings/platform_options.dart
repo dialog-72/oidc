@@ -2,6 +2,7 @@
 // ignore_for_file: camel_case_types, sort_constructors_first
 // ignore_for_file: unnecessary_null_checks
 
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'platform_options.g.dart';
@@ -79,11 +80,11 @@ class OidcPlatformSpecificOptions_AppAuth_Android {
 class OidcPlatformSpecificOptions_AppAuth_IosMacos {
   ///
   const OidcPlatformSpecificOptions_AppAuth_IosMacos({
-    this.preferEphemeralSession = false,
+    this.externalUserAgent = ExternalUserAgent.asWebAuthenticationSession,
   });
 
   ///
-  final bool preferEphemeralSession;
+  final ExternalUserAgent externalUserAgent;
 
   Map<String, dynamic> toJson() {
     return _$OidcPlatformSpecificOptions_AppAuth_IosMacosToJson(this);

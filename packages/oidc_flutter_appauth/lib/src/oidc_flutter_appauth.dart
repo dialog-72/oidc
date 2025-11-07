@@ -23,6 +23,9 @@ mixin OidcFlutterAppauth on OidcPlatform {
   ) =>
       false;
 
+  ExternalUserAgent getExternalUserAgent(OidcPlatformSpecificOptions options) =>
+      ExternalUserAgent.asWebAuthenticationSession;
+
   @override
   Map<String, dynamic> prepareForRedirectFlow(
     OidcPlatformSpecificOptions options,
@@ -60,7 +63,7 @@ mixin OidcFlutterAppauth on OidcPlatform {
         promptValues: request.prompt,
         scopes: request.scope,
         responseMode: request.responseMode,
-        preferEphemeralSession: getPreferEphemeralSession(options),
+        externalUserAgent: getExternalUserAgent(options),
         allowInsecureConnections: getAllowInsecureConnections(options),
       ),
     );
@@ -104,7 +107,7 @@ mixin OidcFlutterAppauth on OidcPlatform {
         ),
         idTokenHint: request.idTokenHint,
         allowInsecureConnections: getAllowInsecureConnections(options),
-        preferEphemeralSession: getPreferEphemeralSession(options),
+        externalUserAgent: getExternalUserAgent(options),
         state: request.state,
         issuer: metadata.issuer?.toString(),
         postLogoutRedirectUrl: request.postLogoutRedirectUri?.toString(),
