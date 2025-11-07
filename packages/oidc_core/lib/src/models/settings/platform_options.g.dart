@@ -64,14 +64,13 @@ OidcPlatformSpecificOptions_AppAuth_IosMacos
     _$OidcPlatformSpecificOptions_AppAuth_IosMacosFromJson(
             Map<String, dynamic> json) =>
         OidcPlatformSpecificOptions_AppAuth_IosMacos(
-          preferEphemeralSession:
-              json['preferEphemeralSession'] as bool? ?? false,
+          externalUserAgent: json['externalUserAgent'] as ExternalUserAgent,
         );
 
 Map<String, dynamic> _$OidcPlatformSpecificOptions_AppAuth_IosMacosToJson(
         OidcPlatformSpecificOptions_AppAuth_IosMacos instance) =>
     <String, dynamic>{
-      'preferEphemeralSession': instance.preferEphemeralSession,
+      'externalUserAgent': instance.externalUserAgent,
     };
 
 OidcPlatformSpecificOptions_Native _$OidcPlatformSpecificOptions_NativeFromJson(

@@ -10,7 +10,7 @@ class OidcMacOS extends OidcPlatform with OidcFlutterAppauth {
   }
 
   @override
-  bool getPreferEphemeralSession(OidcPlatformSpecificOptions options) {
-    return options.macos.preferEphemeralSession;
+  ExternalUserAgent getExternalUserAgent(OidcPlatformSpecificOptions options) {
+    return options.macos.externalUserAgent;
   }
 }
